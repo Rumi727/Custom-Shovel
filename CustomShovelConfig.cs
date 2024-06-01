@@ -2,6 +2,8 @@
 using LethalConfig.ConfigItems.Options;
 using LethalConfig.ConfigItems;
 using LethalConfig;
+using System.IO;
+using System;
 
 namespace Rumi.CustomShovel
 {
@@ -36,14 +38,32 @@ namespace Rumi.CustomShovel
             _radius = config.Bind("General", "Radius", dRadius, "Sets the radius of the hitbox circle.");
             _radius.SettingChanged += (sender, e) => CustomShovelPatches.ShovelPatchUpdate();
 
-            LethalConfigManager.AddConfigItem(new FloatSliderConfigItem(_radius, new FloatSliderOptions() { Min = 0.1f, Max = 10f, RequiresRestart = false }));
 
             _maxDistance = config.Bind("General", "Max Distance", dMaxDistance, "Determines the max distance of the hitbox");
             _maxDistance.SettingChanged += (sender, e) => CustomShovelPatches.ShovelPatchUpdate();
 
-            LethalConfigManager.AddConfigItem(new FloatSliderConfigItem(_maxDistance, new FloatSliderOptions() { Min = 0.1f, Max = 10f, RequiresRestart = false }));
-
             _showShovelHitbox = config.Bind("Debug", "Show Shovel Hitbox", dShowShovelHitbox, "Shows the shovel's hitbox with a line.");
+
+            try
+            {
+                LethalConfigPatch();
+            }
+            catch (FileNotFoundException e)
+            {
+                CustomShovel.logger?.LogError(e);
+                CustomShovel.logger?.LogWarning("Lethal Config Patch Fail! (This is not a bug and occurs when LethalConfig is not present)");
+            }
+            catch (Exception e)
+            {
+                CustomShovel.logger?.LogError(e);
+                CustomShovel.logger?.LogError("Lethal Config Patch Fail!");
+            }
+        }
+
+        void LethalConfigPatch()
+        {
+            LethalConfigManager.AddConfigItem(new FloatSliderConfigItem(_radius, new FloatSliderOptions() { Min = 0.1f, Max = 10f, RequiresRestart = false }));
+            LethalConfigManager.AddConfigItem(new FloatSliderConfigItem(_maxDistance, new FloatSliderOptions() { Min = 0.1f, Max = 10f, RequiresRestart = false }));
             LethalConfigManager.AddConfigItem(new BoolCheckBoxConfigItem(_showShovelHitbox, false));
         }
     }

@@ -8,12 +8,11 @@ using UnityEngine;
 namespace Rumi.CustomShovel
 {
     [BepInPlugin(modGuid, modName, modVersion)]
-    [BepInDependency("ainavt.lc.lethalconfig")]
     public class CustomShovel : BaseUnityPlugin
     {
         public const string modGuid = "Rumi.CustomShovel";
         public const string modName = "CustomShovel";
-        public const string modVersion = "1.0.0";
+        public const string modVersion = "1.0.1";
 
         public static Assembly currentAssembly => _currentAssembly ??= Assembly.GetExecutingAssembly();
         static Assembly? _currentAssembly;
@@ -79,7 +78,7 @@ namespace Rumi.CustomShovel
             {
                 config = null;
                 
-                logger?.LogWarning(e);
+                logger?.LogError(e);
                 logger?.LogWarning($"Failed to load config file\nSettings will be loaded with defaults!");
             }
 
@@ -98,13 +97,13 @@ namespace Rumi.CustomShovel
             }
             catch (TypeLoadException e)
             {
-                logger?.LogWarning(e);
-                logger?.LogInfo("ModelReplacementAPI Patch Fail! (This is not a bug and occurs when ModelReplacementAPI is not present)");
+                logger?.LogError(e);
+                logger?.LogWarning("ModelReplacementAPI Patch Fail! (This is not a bug and occurs when ModelReplacementAPI is not present)");
             }
             catch (Exception e)
             {
                 logger?.LogError(e);
-                logger?.LogInfo("ModelReplacementAPI Patch Fail!");
+                logger?.LogError("ModelReplacementAPI Patch Fail!");
             }
 
             logger?.LogInfo($"Plugin {modName} is loaded!");
